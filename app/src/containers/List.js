@@ -15,7 +15,7 @@ const List = ({ headers, rows, title, canAdd, loading }) => {
 
   const renderContent = useCallback((row, { value, text, link }) => {
     let content = '';
-    console.log(1111, value, text, link);
+
     if (value || text) {
       content = getValue(value || text, row);
       if (link) {
@@ -31,12 +31,11 @@ const List = ({ headers, rows, title, canAdd, loading }) => {
 
     switch (type) {
       default:
-        content = renderContent(row, { type, value, link });
+        content = renderContent(row, { value, link });
         break;
 
       case ColumnType.CONTEXT:
         content = (values || []).map(it => renderContent(row, it)).join(' | ');
-        console.log((values || []).map(it => renderContent(row, it)));
         break;
     }
 
