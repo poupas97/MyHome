@@ -1,34 +1,53 @@
-import React, { useEffect, useReducer } from 'react';
+import { array, bool, func } from 'prop-types';
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
+import { compose } from 'redux';
 
-import List, { ColumnType } from '../containers/List';
-import { InitialState } from '../store/factory';
-import actions, { sensorReducer } from '../store/sensor';
+import List from '../containers/List';
+import { listSensorAction, resetSensorAction, selectorsSensor } from '../store/sensor';
 
 export const SENSOR_LIST_ROUTE = '/sensors';
 
-const SensorList = () => {
-  const [{ list, loading }, dispatch] = useReducer(sensorReducer, InitialState);
-  const { listSensor, resetSensor } = actions(dispatch);
+const SensorList = ({ sensors, loading, list, reset }) => {
 
-  useEffect(() => () => resetSensor(), []);
+  useEffect(() => () => reset(), [reset]);
 
   useEffect(() => {
-    listSensor();
-  }, []);
+    if (!sensors) list();
+  }, [sensors, list]);
 
   const headers = [
     { text: 'Name', value: 'name' },
-    { text: 'Options', type: ColumnType.CONTEXT, values: [
-      { text: 'details', /*link: RECIPES_DETAILS_ROUTE*/ }] },
+    { text: 'Created', value: 'created' },
+    { text: 'Modified', value: 'modified' },
+    /*{ text: 'Options', type: ColumnType.CONTEXT, values: [
+      { text: 'details', link: RECIPES_DETAILS_ROUTE }] },*/
   ];
 
   return (
     <List
       headers={headers}
-      rows={list}
+      rows={sensors}
       loading={loading}
     />
   );
 };
 
-export default SensorList;
+SensorList.propTypes = {
+  sensors: array,
+  loading: bool,
+  list: func,
+  reset: func,
+};
+
+const mapStateToProps = state => ({
+  sensors: selectorsSensor(state).list,
+  loading: selectorsSensor(state).loading,
+});
+
+const mapActionsToProps = dispatch => ({
+  list: () => listSensorAction(dispatch),
+  reset: () => resetSensorAction(dispatch),
+});
+
+export default compose(connect(mapStateToProps, mapActionsToProps))(SensorList);

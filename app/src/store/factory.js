@@ -14,10 +14,23 @@ const capitalize = value =>
   String(value).split('_').map(it =>
     it.charAt(0).toUpperCase() + it.slice(1).toLowerCase()).join('');
 
-export const generateActions = prefix =>
+const generateActionsName = prefix =>
   actions.reduce((acc, current) =>
     ({ ...acc, [capitalize(current)]: `${String(prefix).toUpperCase()}_${current}` })
   , {});
+
+const generateActionsDispatch = prefix =>
+  actions.reduce((acc, current) =>
+    ({ ...acc,
+      [capitalize(current)]: (dispatch, payload, error, meta) =>
+        dispatch({ type: `${String(prefix).toUpperCase()}_${current}`, payload, error, meta })
+    })
+  , {});
+
+export const generateActions = prefix => [
+  generateActionsDispatch(prefix),
+  generateActionsName(prefix)
+];
 
 export const generateReducer = thisActions => (state = InitialState, action) => {
   switch (action.type) {

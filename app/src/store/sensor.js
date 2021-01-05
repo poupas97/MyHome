@@ -1,34 +1,35 @@
 import Api from '../api/Api';
 import { generateActions, generateReducer } from './factory';
 
-const ACTIONS = generateActions('sensors');
+const [ACTIONS_DISPATCH, ACTIONS_NAMES] = generateActions('sensors');
 
-export const sensorReducer = generateReducer(ACTIONS);
+export const SENSORS = generateReducer(ACTIONS_NAMES);
 
-const resetSensor = async dispatch => {
-  dispatch({ type: ACTIONS.Reset });
+export const selectorsSensor = state => state.SENSORS;
+
+export const resetSensorAction = async dispatch => {
+  ACTIONS_DISPATCH.Reset(dispatch);
 };
 
-const listSensor = async dispatch => {
+export const listSensorAction = async dispatch => {
   try {
-    dispatch({ type: ACTIONS.Loading });
+    ACTIONS_DISPATCH.Loading(dispatch);
 
-    const data = await Api.Get('sensors/');
-
-    dispatch({ type: ACTIONS.List, payload: data });
+    const payload = await Api.Get('sensors/');
+    ACTIONS_DISPATCH.List(dispatch, payload);
   } catch (error) {
-    dispatch({ type: ACTIONS.Error, payload: error });
+    ACTIONS_DISPATCH.Error(dispatch, error);
   }
 };
 
-const getSensor = async (dispatch, id) => {
-  dispatch({ type: ACTIONS.Loading });
-  const data = await Api.Get(`sensors/${id}/`);
-  dispatch({ type: ACTIONS.Item, payload: data });
+export const getSensorAction = async (dispatch, id) => {
+  try {
+    ACTIONS_DISPATCH.Loading(dispatch);
+
+    const payload = await Api.Get(`sensors/${id}/`);
+    ACTIONS_DISPATCH.Item(dispatch, payload);
+  } catch (error) {
+    ACTIONS_DISPATCH.Error(dispatch, error);
+  }
 };
 
-export default dispatch => ({
-  resetSensor: () => resetSensor(dispatch),
-  listSensor: () => listSensor(dispatch),
-  getSensor: () => getSensor(dispatch),
-});
