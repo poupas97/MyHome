@@ -25,8 +25,8 @@ const singleSensorById = async (req, res) => {
 
 const createSensor = async (req, res) => {
   try {
-    const { body: { name, description } } = req;
-    const result = await SensorConnection.createSensor({ name, description });
+    const { body } = req;
+    const result = await SensorConnection.createSensor(body);
     return res.status(200).json(result);
   } catch (error) {
     return res.status(500).json(errorDtoSimple(error));
@@ -35,11 +35,11 @@ const createSensor = async (req, res) => {
 
 const updateSensor = async (req, res) => {
   try {
-    const { body: { name, description, active }, params: { id } } = req;
+    const { body, params: { id } } = req;
 
     if (!id) return res.status(500).json(errorDtoSimple(ErrorMapper.MISS_ID));
 
-    const result = await SensorConnection.updateSensor({ name, description, active }, id);
+    const result = await SensorConnection.updateSensor(body, id);
     return res.status(200).json(result);
   } catch (error) {
     return res.status(500).json(errorDtoSimple(error));

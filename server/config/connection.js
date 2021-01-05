@@ -26,10 +26,10 @@ async function select(table, where) {
     if (where) {
       const elements = where.reduce((acc, { prop, operator, value }) => ({
         ...acc,
-        collumns: [...(acc.collumns || []), `${prop} ${operator} ? `],
+        columns: [...(acc.columns || []), `${prop} ${operator} ? `],
         values: [...(acc.values || []), value]
       }), {});
-      const query = `SELECT * from ${table} WHERE ${elements.collumns.join(' AND ')}`;
+      const query = `SELECT * from ${table} WHERE ${elements.columns.join(' AND ')}`;
 
       [result] = await connection.query(query, elements.values);
     } else {
@@ -65,10 +65,10 @@ async function selectSinge(table, where) {
     console.log('SELECT SINGLE, running query');
     const elements = where.reduce((acc, { prop, operator, value }) => ({
       ...acc,
-      collumns: [...(acc.collumns || []), `${prop} ${operator} ? `],
+      columns: [...(acc.columns || []), `${prop} ${operator} ? `],
       values: [...(acc.values || []), value]
     }), {});
-    const query = `SELECT * from ${table} WHERE ${elements.collumns.join(' AND ')}`;
+    const query = `SELECT * from ${table} WHERE ${elements.columns.join(' AND ')}`;
 
     // const [rows, fileds] = await connection.query(query);
     console.log(`SELECT, query: ${query}`);
@@ -99,12 +99,12 @@ async function insert(table, value) {
     console.log('INSERT, running query');
     const elements = Object.entries(value).reduce((acc, [key, value]) => ({
       ...acc,
-      collumns: [...(acc.collumns || []), key],
+      columns: [...(acc.columns || []), key],
       values: [...(acc.values || []), value]
     }), {});
 
-    const query = `INSERT INTO ${table} (${elements.collumns.join(', ')}) VALUES (${
-      Array(elements.collumns.length).fill('?').join(', ')})`;
+    const query = `INSERT INTO ${table} (${elements.columns.join(', ')}) VALUES (${
+      Array(elements.columns.length).fill('?').join(', ')})`;
 
     console.log(`SELECT, query: ${query}`);
     const [result] = await connection.query(query, elements.values);
@@ -134,11 +134,11 @@ async function update(table, value, id) {
     console.log('UPDATE, running query');
     const elements = Object.entries(value).reduce((acc, [key, value]) => ({
       ...acc,
-      collumns: [...(acc.collumns || []), `${key} = ?`],
+      columns: [...(acc.columns || []), `${key} = ?`],
       values: [...(acc.values || []), value]
     }), {});
 
-    const query = `UPDATE ${table} SET ${elements.collumns.join(', ')} WHERE id = ?`;
+    const query = `UPDATE ${table} SET ${elements.columns.join(', ')} WHERE id = ?`;
 
     console.log(`SELECT, query: ${query}`);
     const [result] = await connection.query(query, [...elements.values, id]);

@@ -33,3 +33,13 @@ export const getSensorAction = async (dispatch, id) => {
   }
 };
 
+export const createSensorAction = async (dispatch, sensor) => {
+  try {
+    ACTIONS_DISPATCH.Loading(dispatch);
+
+    const { id } = await Api.Post('sensors/', sensor);
+    ACTIONS_DISPATCH.Save(dispatch, !!id);
+  } catch (error) {
+    ACTIONS_DISPATCH.Error(dispatch, error);
+  }
+};

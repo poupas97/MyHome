@@ -5,6 +5,7 @@ import { compose } from 'redux';
 
 import List from '../containers/List';
 import { listSensorAction, resetSensorAction, selectorsSensor } from '../store/sensor';
+import { SENSOR_CREATE_ROUTE } from './SensorCreate';
 
 export const SENSOR_LIST_ROUTE = '/sensors';
 
@@ -29,6 +30,7 @@ const SensorList = ({ sensors, loading, list, reset }) => {
       headers={headers}
       rows={sensors}
       loading={loading}
+      canAdd={SENSOR_CREATE_ROUTE}
     />
   );
 };
@@ -40,10 +42,13 @@ SensorList.propTypes = {
   reset: func,
 };
 
-const mapStateToProps = state => ({
-  sensors: selectorsSensor(state).list,
-  loading: selectorsSensor(state).loading,
-});
+const mapStateToProps = state => {
+  const data = selectorsSensor(state);
+  return ({
+    sensors: data.list,
+    loading: data.loading,
+  });
+};
 
 const mapActionsToProps = dispatch => ({
   list: () => listSensorAction(dispatch),

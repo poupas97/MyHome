@@ -5,6 +5,7 @@
 /app/coverage
 /app/build
 
+/app/.eslintcache
 /app/.DS_Store
 /app/.env.local
 /app/.env.development.local
