@@ -4,13 +4,18 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 
 import Form, { FormInputType } from '../containers/Form';
-import { saveSensorAction } from '../store/sensor';
+import { getSensorAction, saveSensorAction } from '../store/sensor';
 import { selectorsSensor } from '../store/sensor';
 import { SENSOR_LIST_ROUTE } from './SensorList';
 
-export const SENSOR_CREATE_ROUTE = '/sensors/create';
+export const SENSOR_EDIT_ROUTE = '/sensors/edit/:id';
 
-const SensorCreate = ({ history, createSensor, saved, error, loading }) => {
+const SensorEdit = ({
+  history, item, sensor, update, saved, error, loading, match: { params: { id } } }) => {
+
+  useEffect(() => {
+    if (!sensor) item(id);
+  }, [sensor, item, id]);
 
   const goBack = useCallback(() => {
     history.push(SENSOR_LIST_ROUTE);
@@ -26,9 +31,10 @@ const SensorCreate = ({ history, createSensor, saved, error, loading }) => {
 
   return (
     <Form
+      data={sensor}
       inputs={inputs}
-      onSubmit={createSensor}
-      title="Create a Sensor"
+      onSubmit={update}
+      title="Update a Sensor"
       onCancel={goBack}
       error={error}
       loading={loading}
@@ -36,17 +42,22 @@ const SensorCreate = ({ history, createSensor, saved, error, loading }) => {
   );
 };
 
-SensorCreate.propTypes = {
-  history:object, // eslint-disable-line key-spacing
-  createSensor: func,
+SensorEdit.propTypes = {
+  history: object, // eslint-disable-line key-spacing
+  item: func,
+  reset: func,
+  sensor: object, // eslint-disable-line key-spacing
+  update: func,
   saved: bool,
   error: bool,
   loading: bool,
+  match: object, // eslint-disable-line key-spacing
 };
 
 const mapStateToProps = state => {
   const data = selectorsSensor(state);
   return ({
+    sensor: data.item,
     saved: data.saved,
     error: data.error,
     loading: data.loading,
@@ -54,9 +65,10 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => ({
-  createSensor: sensor => saveSensorAction(dispatch, sensor)
+  item: id => getSensorAction(dispatch, id),
+  update: sensor => saveSensorAction(dispatch, sensor),
 });
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
-)(SensorCreate);
+)(SensorEdit);

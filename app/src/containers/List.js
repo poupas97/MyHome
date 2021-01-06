@@ -17,9 +17,9 @@ const List = ({ headers, rows, title, canAdd, loading }) => {
     let content = '';
 
     if (value || text) {
-      content = getValue(value || text, row);
+      content = getValue(value, row);
       if (link) {
-        content = <Link to={resolveLink(link, row)}>{content}</Link>;
+        content = <Link to={resolveLink(link, row)}>{text || content}</Link>;
       }
     }
 
@@ -35,7 +35,7 @@ const List = ({ headers, rows, title, canAdd, loading }) => {
         break;
 
       case ColumnType.CONTEXT:
-        content = (values || []).map(it => renderContent(row, it)).join(' | ');
+        content = (values || []).map(it => renderContent(row, it));
         break;
     }
 

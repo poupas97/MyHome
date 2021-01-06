@@ -1,3 +1,6 @@
+import get from 'lodash/get';
+import has from 'lodash/has';
+
 import Api from '../api/Api';
 import { generateActions, generateReducer } from './factory';
 
@@ -33,12 +36,20 @@ export const getSensorAction = async (dispatch, id) => {
   }
 };
 
-export const createSensorAction = async (dispatch, sensor) => {
+export const saveSensorAction = async (dispatch, sensor) => {
   try {
     ACTIONS_DISPATCH.Loading(dispatch);
 
-    const { id } = await Api.Post('sensors/', sensor);
-    ACTIONS_DISPATCH.Save(dispatch, !!id);
+    let saved;
+    if (has(sensor, 'id')) {
+      const { updated } = await Api.Put(`sensors/${get(sensor, 'id')}/`, sensor);
+      saved = updated;
+    } else {
+      const { id } = await Api.Post('sensors/', sensor);
+      saved = !!id;
+    }
+
+    ACTIONS_DISPATCH.Save(dispatch, saved);
   } catch (error) {
     ACTIONS_DISPATCH.Error(dispatch, error);
   }

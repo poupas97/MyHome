@@ -3,15 +3,19 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 
-import List from '../containers/List';
+import List, { ColumnType } from '../containers/List';
 import { listSensorAction, resetSensorAction, selectorsSensor } from '../store/sensor';
 import { SENSOR_CREATE_ROUTE } from './SensorCreate';
+import { SENSOR_EDIT_ROUTE } from './SensorEdit';
 
 export const SENSOR_LIST_ROUTE = '/sensors';
 
 const SensorList = ({ sensors, loading, list, reset }) => {
 
-  useEffect(() => () => reset(), [reset]);
+  useEffect(() => {
+    reset();
+    return () => reset();
+  }, []);
 
   useEffect(() => {
     if (!sensors) list();
@@ -21,8 +25,8 @@ const SensorList = ({ sensors, loading, list, reset }) => {
     { text: 'Name', value: 'name' },
     { text: 'Created', value: 'created' },
     { text: 'Modified', value: 'modified' },
-    /*{ text: 'Options', type: ColumnType.CONTEXT, values: [
-      { text: 'details', link: RECIPES_DETAILS_ROUTE }] },*/
+    { text: 'Options', type: ColumnType.CONTEXT, values: [
+      { text: 'Edit', link: SENSOR_EDIT_ROUTE }] },
   ];
 
   return (
