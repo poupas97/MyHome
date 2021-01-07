@@ -1,19 +1,19 @@
+import { object } from 'prop-types';
 import React from 'react';
-import { useHistory } from 'react-router-dom';
 
 export const HOME_ROUTE = '/';
 
-const Home = () => {
-  const history = useHistory();
+const Home = ({ history }) => (
+  <>
+    <h3>
+      Hello, My Home
+    </h3>
+    <button onClick={() => history.push('/sensors')}>Sensors List</button>
+  </>
+);
 
-  return (
-    <>
-      <h3>
-        Hello, My Home
-      </h3>
-      <button onClick={() => history.push('/sensors')}>Sensors List</button>
-    </>
-  );
+Home.propTypes = {
+  history: object,
 };
 
 export default Home;
